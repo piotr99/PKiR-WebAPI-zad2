@@ -14,3 +14,7 @@ public interface IWeatherForecastService
 {
     Task<WeatherResponse> GetWeatherForecastAsync(string cityName);
 }
+public interface IScriptService
+{
+    Task<bool> PostScript(string script);
+}
