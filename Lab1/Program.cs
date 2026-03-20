@@ -1,7 +1,7 @@
 using Lab1;
 using Lab1.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
+using Lab1.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +13,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<ITemperatureService, Lab1.Services.TemperatureService>();
-builder.Services.AddSingleton<IWindService, Lab1.Services.WindService>();
-builder.Services.AddSingleton<IScriptService, Lab1.Services.ScriptService>();
+builder.Services.AddSingleton<ITemperatureService, TemperatureService>();
+builder.Services.AddSingleton<IWindService, WindService>();
+builder.Services.AddSingleton<IScriptService, ScriptService>();
 builder.Services.AddHttpClient<IWeatherForecastService, WeatherForecastService>((sp, client) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -35,23 +35,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/temperature/{cityId}", (int cityId, ITemperatureService tempService) =>
-{
-    return tempService.GetTempForCity(cityId);
-});
-app.MapGet("/winddirection", (IWindService windService) =>
-{
-    return windService.GetWindDirection();
-});
-app.MapGet("/forecast/{cityName}", (string cityName, IWeatherForecastService weahterService) =>
-{
-    return weahterService.GetWeatherForecastAsync(cityName);
-});
-app.MapPost("/weatherPresenterScript", async (string script, [FromServices] IScriptService scriptService) =>
-{
-    var isSuccess = await scriptService.PostScript(script);
-    return isSuccess ? Results.Ok("działa") : Results.BadRequest("bład czegos");
-});
 
 app.UseHttpsRedirection();
 
